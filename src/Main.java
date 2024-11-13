@@ -1,20 +1,85 @@
 import entity.Project;
 import entity.Task;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
+    private static final Scanner sc = new Scanner(System.in);
     public static void main(String[] args) {
+        System.out.println("Create your own schedule for tasks.");
+        List<Project> projects = new ArrayList<>();
+        projects.add(getSampleProject1());
+        int choice = 0;
+        do {
+            try {
+                System.out.println("""
+                    
+                    Choose your action:
+                    [0] Create Project/Plan
+                    [1] View Projects/Plan
+                    [2] Scheduler
+                    [3] Exit""");
+                choice = Integer.parseInt(getInput("Enter your choice: "));
 
-        Scheduler scheduler = new Scheduler(getSampleProject1());
-        scheduler.schedule();
-        System.out.println("-----------------------------------");
-        System.out.println("Scheduling for : " + scheduler.getProject().getProjectName());
-        for(Task task : scheduler.getProject().getTasks()){
-            System.out.println(task);
-        }
-        System.out.println("-----------------------------------");
+                if (choice == 0) {
+                    System.out.println("---------CREATING PROJECT/PLAN---------");
+                    Project currProject = new Project();
+                    currProject.setProjectName(getInput("Enter project/plan name: "));
+                    projects.add(currProject);
+                    int taskCount = Integer.parseInt(getInput("How many task: ")) ;
+                    for(int i=taskCount; i>0; i--){
+                        createTask(currProject);
+                    }
+                    System.out.println("**Project added successfully.");
+                    System.out.println("---------CREATING PROJECT/PLAN---------");
+                } else if (choice == 1) {
+                    System.out.println("---------VIEWING PROJECT/PLAN---------");
+                    if (projects.isEmpty()) {
+                        System.out.println("**No projects/plan available.");
+                    } else {
+                        System.out.println(projects.stream()
+                                .map(Project::toString)
+                                .collect(Collectors.joining("\n\n")));
+                    }
+                    System.out.println("---------VIEWING PROJECT/PLAN---------");
+                } else if (choice==2) {
+                    System.out.println("---------SCHEDULER---------");
+                    String projName = getInput("Enter project/plan name to schedule: ");
+                    Optional<Project> projToSched = projects.stream()
+                            .filter(p -> p.getProjectName().equalsIgnoreCase(projName))
+                            .findFirst();
+                    if (projToSched.isEmpty()) {
+                        System.out.println("**Project/plan not found.");
+                    }else{
+                        Scheduler scheduler = new Scheduler(projToSched.get());
+                        scheduler.schedule();
+                        System.out.printf("SCHEDULE FOR %s\n", scheduler.getProject().getProjectName());
+                        scheduler.getProject().getTasks()
+                                .forEach(System.out::println);
+                    }
+                    System.out.println("---------SCHEDULER---------");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("**Invalid input. Please enter an integer.");
+            } catch (Exception e1) {
+                System.out.println("**Unexpected error occurred." + e1.getMessage());
+            }
+        } while (choice != 3);
+
+        sc.close();
+        System.out.println("Exiting the program. Goodbye!");
+    }
+    private static void createTask(Project project){
+        Task task = new Task();
+        task.setTaskName(getInput("Enter Task Name: "));
+        task.setDuration(Integer.parseInt(getInput("Enter Task Duration: ")));
+        project.addTask(task);
+    }
+
+    private static String getInput(String description){
+        System.out.print(description);
+        return sc.nextLine();
     }
 
     private static Project getSampleProject1() {
@@ -42,7 +107,7 @@ public class Main {
         goOut.addSubTask(wearJacket);
         wearWatch.addSubTask(wearJacket);
 
-        List<Task> tasks = Arrays.asList(wearUndies, wearShirt, applyPerfume, wearWatch,  wearPants, goOut, fixHair, wearShoes, wearSocks, wearJacket);
+        List<Task> tasks = Arrays.asList(applyPerfume, wearUndies, wearShirt, wearWatch,  wearPants, goOut, fixHair, wearShoes, wearSocks, wearJacket);
 
         return new Project("How to get dressed", tasks);
     }

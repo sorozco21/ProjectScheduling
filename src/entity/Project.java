@@ -1,14 +1,23 @@
 package entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Project {
     private String projectName;
-    private List<Task> tasks;
+    private List<Task> tasks = new ArrayList<>();
     private LocalDate startDate;
 
-    public Project(){}
+    public Project(){
+        this.startDate = LocalDate.now();
+    }
+    public Project(String projectName){
+        this.projectName=projectName;
+        this.startDate = LocalDate.now();
+    }
 
     public Project(String projectName, List<Task> tasks){
         this.projectName = projectName;
@@ -35,4 +44,12 @@ public class Project {
     public LocalDate getStartDate(){ return this.startDate; }
     public void setStartDate(LocalDate startDate){ this.startDate=startDate; }
 
+    @Override
+    public String toString() {
+        return "Project Name: " + projectName + "\n" +
+                tasks.stream()
+                        .filter(Objects::nonNull)
+                        .map(Task::toString)
+                        .collect(Collectors.joining("\n"));
+    }
 }

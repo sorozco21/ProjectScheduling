@@ -15,6 +15,7 @@ public class Task {
         this.taskName = taskName;
         this.duration = duration;
     }
+    public Task(){}
 
     // TODO: to be assigned
     private LocalDate startDate;

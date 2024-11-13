@@ -15,20 +15,23 @@ public class Scheduler {
     public void schedule(){
         List<Task> sortedTasks = topologicalSort();
         List<Task> sortedAndScheduledTask = new ArrayList<>();
+        LocalDate currDate = project.getStartDate();
         for(Task task : sortedTasks){
             if(task.getSubTasks().isEmpty()){
-                task.setStartAndEndDate(project.getStartDate());
+                task.setStartAndEndDate(currDate);
             }else{
-                LocalDate maxEndDate = project.getStartDate();
-
+                LocalDate latestEndDate = project.getStartDate();
                 for(Task subTask : task.getSubTasks()){
-                    if(subTask.getEndDate() != null && subTask.getEndDate().isAfter(maxEndDate)){
-                        maxEndDate = subTask.getEndDate();
+                    if(subTask.getEndDate() != null && subTask.getEndDate().isAfter(latestEndDate)){
+                        latestEndDate = subTask.getEndDate();
                     }
                 }
-
-                task.setStartAndEndDate(maxEndDate.plusDays(1));
+                task.setStartAndEndDate(
+                        currDate.isAfter(latestEndDate) ? currDate
+                                : latestEndDate.plusDays(1)
+                );
             }
+            currDate = task.getEndDate().plusDays(1);
             sortedAndScheduledTask.add(task);
         }
         project.setTasks(sortedAndScheduledTask);
