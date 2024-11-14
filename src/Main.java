@@ -26,11 +26,13 @@ public class Main {
                     System.out.println("---------CREATING PROJECT/PLAN---------");
                     Project currProject = new Project();
                     currProject.setProjectName(getInput("Enter project/plan name: "));
-                    projects.add(currProject);
+
                     int taskCount = Integer.parseInt(getInput("How many task: ")) ;
                     for(int i=taskCount; i>0; i--){
                         createTask(currProject);
                     }
+                    addSubTask(currProject);
+                    projects.add(currProject);
                     System.out.println("**Project added successfully.");
                     System.out.println("---------CREATING PROJECT/PLAN---------");
                 } else if (choice == 1) {
@@ -75,6 +77,22 @@ public class Main {
         task.setTaskName(getInput("Enter Task Name: "));
         task.setDuration(Integer.parseInt(getInput("Enter Task Duration: ")));
         project.addTask(task);
+    }
+
+    private static void addSubTask(Project project) {
+        String choice;
+        do {
+            choice = getInput("Add Task Dependencies? (y/n): ");
+
+            if (!choice.equalsIgnoreCase("y")) {
+                break;
+            }
+
+            String mainTaskName = getInput("Enter Task Name to add dependencies: ");
+            String subTaskName = getInput("Enter the name of the subtask to add as a dependency: ");
+
+            project.addSubTask(mainTaskName, subTaskName);
+        } while (choice.equalsIgnoreCase("y"));
     }
 
     private static String getInput(String description){

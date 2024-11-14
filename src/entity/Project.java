@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Project {
@@ -51,5 +52,24 @@ public class Project {
                         .filter(Objects::nonNull)
                         .map(Task::toString)
                         .collect(Collectors.joining("\n"));
+    }
+
+    public void addSubTask(String mainTaskName, String subTaskName) {
+        Optional<Task> mainTaskOptional = tasks.stream()
+                .filter(task -> task.getTaskName().equalsIgnoreCase(mainTaskName))
+                .findFirst();
+
+        Optional<Task> subTaskOptional = tasks.stream()
+                .filter(task -> task.getTaskName().equalsIgnoreCase(subTaskName))
+                .findFirst();
+
+        if (mainTaskOptional.isPresent() && subTaskOptional.isPresent()) {
+            Task mainTask = mainTaskOptional.get();
+            Task subTask = subTaskOptional.get();
+            mainTask.addSubTask(subTask);
+            System.out.println("Subtask added as a dependency.");
+        } else {
+            System.out.println("**Either the main task or subtask was not found in the project.");
+        }
     }
 }
