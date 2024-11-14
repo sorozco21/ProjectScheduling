@@ -1,6 +1,8 @@
 import entity.Project;
 import entity.Task;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,7 +28,7 @@ public class Main {
                     System.out.println("---------CREATING PROJECT/PLAN---------");
                     Project currProject = new Project();
                     currProject.setProjectName(getInput("Enter project/plan name: "));
-
+                    currProject.setStartDate(LocalDate.parse(getInput("Enter project start date in this format (yyyy-MM-dd):")));
                     int taskCount = Integer.parseInt(getInput("How many task: ")) ;
                     for(int i=taskCount; i>0; i--){
                         createTask(currProject);
@@ -56,7 +58,7 @@ public class Main {
                     }else{
                         Scheduler scheduler = new Scheduler(projToSched.get());
                         scheduler.schedule();
-                        System.out.printf("SCHEDULE FOR %s\n", scheduler.getProject().getProjectName());
+                        System.out.printf("SCHEDULE FOR : %s\n", scheduler.getProject().getProjectWithStartEnd());
                         scheduler.getProject().getTasks()
                                 .forEach(System.out::println);
                     }
@@ -64,6 +66,8 @@ public class Main {
                 }
             } catch (NumberFormatException e) {
                 System.out.println("**Invalid input. Please enter an integer.");
+            } catch (DateTimeParseException de){
+                System.out.println("**Invalid date format. Please enter the date in the format yyyy-MM-dd.");
             } catch (Exception e1) {
                 System.out.println("**Unexpected error occurred." + e1.getMessage());
             }

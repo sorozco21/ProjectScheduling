@@ -11,6 +11,7 @@ public class Project {
     private String projectName;
     private List<Task> tasks = new ArrayList<>();
     private LocalDate startDate;
+    private LocalDate endDate;
 
     public Project(){
         this.startDate = LocalDate.now();
@@ -18,6 +19,10 @@ public class Project {
     public Project(String projectName){
         this.projectName=projectName;
         this.startDate = LocalDate.now();
+    }
+    public Project(String projectName, LocalDate startDate){
+        this.projectName=projectName;
+        this.startDate = startDate;
     }
 
     public Project(String projectName, List<Task> tasks){
@@ -44,10 +49,12 @@ public class Project {
 
     public LocalDate getStartDate(){ return this.startDate; }
     public void setStartDate(LocalDate startDate){ this.startDate=startDate; }
+    public LocalDate getEndDate(){ return this.endDate; }
+    public void setEndDate(LocalDate endDate){ this.endDate=endDate; }
 
     @Override
     public String toString() {
-        return "Project Name: " + projectName + "\n" +
+        return getProjectWithStartEnd() + " \n" +
                 tasks.stream()
                         .filter(Objects::nonNull)
                         .map(Task::toString)
@@ -71,5 +78,8 @@ public class Project {
         } else {
             System.out.println("**Either the main task or subtask was not found in the project.");
         }
+    }
+    public String getProjectWithStartEnd(){
+        return projectName + " from " +startDate+" to "+endDate;
     }
 }

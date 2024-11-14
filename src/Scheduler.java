@@ -35,6 +35,7 @@ public class Scheduler {
             sortedAndScheduledTask.add(task);
         }
         project.setTasks(sortedAndScheduledTask);
+        project.setEndDate(currDate);
     }
     
     // use Kahn’s algorithm for Topological Sorting
