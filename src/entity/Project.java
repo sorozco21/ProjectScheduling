@@ -30,6 +30,11 @@ public class Project {
         this.tasks = tasks;
         this.startDate = LocalDate.now();
     }
+    public Project(String projectName, List<Task> tasks, LocalDate startDate){
+        this.projectName = projectName;
+        this.tasks = tasks;
+        this.startDate = startDate;
+    }
 
     public String getProjectName(){ return this.projectName; }
     public void setProjectName(String projectName){ this.projectName=projectName; }

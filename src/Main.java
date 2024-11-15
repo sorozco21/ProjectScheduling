@@ -12,6 +12,7 @@ public class Main {
         System.out.println("Create your own schedule for tasks.");
         List<Project> projects = new ArrayList<>();
         projects.add(getSampleProject1());
+        projects.add(getSampleProject2());
         int choice = 0;
         do {
             try {
@@ -27,12 +28,25 @@ public class Main {
                 if (choice == 0) {
                     System.out.println("---------CREATING PROJECT/PLAN---------");
                     Project currProject = new Project();
-                    currProject.setProjectName(getInput("Enter project/plan name: "));
+                    String projectName = getInput("Enter project/plan name: ");
+                    if (projects.stream().anyMatch(p -> p.getProjectName().equalsIgnoreCase(projectName))) {
+                        System.out.println("**Project with this name already exists. Choose a different name.");
+                        continue;
+                    }
+
+                    currProject.setProjectName(projectName);
                     currProject.setStartDate(LocalDate.parse(getInput("Enter project start date in this format (yyyy-MM-dd):")));
                     int taskCount = Integer.parseInt(getInput("How many task: ")) ;
-                    for(int i=taskCount; i>0; i--){
-                        createTask(currProject);
-                    }
+                    do {
+                        Task task = createTask();
+                        if (currProject.getTasks().stream().anyMatch(t -> t.getTaskName().equalsIgnoreCase(task.getTaskName()))) {
+                            System.out.println("**Task with this name already exists. Choose a different name.");
+                        }else{
+                            currProject.addTask(task);
+                            taskCount--;
+                        }
+                    }while(taskCount>0);
+
                     addSubTask(currProject);
                     projects.add(currProject);
                     System.out.println("**Project added successfully.");
@@ -76,11 +90,11 @@ public class Main {
         sc.close();
         System.out.println("Exiting the program. Goodbye!");
     }
-    private static void createTask(Project project){
+    private static Task createTask(){
         Task task = new Task();
         task.setTaskName(getInput("Enter Task Name: "));
         task.setDuration(Integer.parseInt(getInput("Enter Task Duration: ")));
-        project.addTask(task);
+        return task;
     }
 
     private static void addSubTask(Project project) {
@@ -133,5 +147,21 @@ public class Main {
 
         return new Project("How to get dressed", tasks);
     }
-    
+
+    private static Project getSampleProject2(){
+        //linear
+        Task plan = new Task("Planning", 5);
+        Task design = new Task("Design", 4);
+        Task develop = new Task("Develop", 25);
+        Task test = new Task("Testing", 10);
+        Task deploy = new Task("Deploy", 3);
+        Task review = new Task("Review", 2);
+
+        review.addSubTask(deploy);
+        deploy.addSubTask(test);
+        test.addSubTask(develop);
+        develop.addSubTask(design);
+        design.addSubTask(plan);
+        return new Project("Sprint 1", Arrays.asList(review,test,deploy,develop,design,plan));
+    }
 }
